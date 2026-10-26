@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOCFL A2 - Book 1 Vocabulary Master</title>
+    <style>
+        /* Base Styles & Reset */
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+        
+        body { 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+            min-height: 100vh;
+            display: flex; 
+            flex-direction: column;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-brand span {
+            color: #00d2ff;
+        }
+
+        /* Centered Header Title */
+        .header-title-container {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-title-container h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #a8c0ff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            margin: 0;
+        }
+
+        .lesson-selector {
+            position: relative;
+        }
+
+        .lesson-select {
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 8px 35px 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .lesson-select:hover, .lesson-select:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00d2ff;
+        }
+
+        .lesson-select option {
+            background: #1e3c72;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #fff;
+            font-size: 0.7rem;
+        }
+
+        /* Progress Bar Section */
+        .progress-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            height: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #00d2ff;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        
+        #card-counter {
+            font-size: 0.85rem;
+            color: #e0e0e0;
+        }
+
+        /* Main Content Area */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px 40px;
+        }
+
+        /* Responsive 3D Flashcard Scene */
+        .card-scene { 
+            perspective: 1500px; 
+            width: 100%; 
+            max-width: 850px; 
+            /* Wider aspect ratio to match the screenshots */
+            height: 45vh;
+            min-height: 300px;
+            max-height: 450px;
+            cursor: pointer; 
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+        
+        .card { 
+            width: 100%; 
+            height: 100%; 
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d; 
+            position: relative; 
+            border-radius: 16px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+        }
+        
+        .card.flipped { 
+            transform: rotateY(180deg); 
+        }
+        
+        .card-face { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            backface-visibility: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 16px; 
+            padding: 30px; 
+            background: #ffffff;
+            color: #333;
+        }
+        
+        .card-back { 
+            transform: rotateY(180deg); 
+            background: #f8fafc;
+        }
+
+        /* Flashcard Typography - Thinner Font Weight */
+        .vocab-type {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #e2e8f0;
+            color: #64748b;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .word { 
+            font-size: clamp(5rem, 10vw, 8rem); 
+            /* Thinner font weight as requested */
+            font-weight: 400; 
+            color: #0f172a; 
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .pinyin { 
+            font-size: clamp(2rem, 4vw, 3.5rem); 
+            color: #3b82f6; 
+            font-weight: 400;
+            margin-bottom: 20px; 
+            text-align: center;
+        }
+        
+        .meaning { 
+            font-size: clamp(1.5rem, 3vw, 2.5rem); 
+            color: #334155; 
+            font-weight: 400;
+            text-align: center; 
+            line-height: 1.4; 
+            max-width: 90%;
+        }
+        
+        .hint { 
+            position: absolute; 
+            bottom: 20px; 
+            color: #cbd5e1; 
+            font-size: 0.9rem; 
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .hint::before {
+            content: "↻";
+            font-size: 1.1rem;
+        }
+
+        /* Controls */
+        .controls { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        button { 
+            font-size: 1rem; 
+            font-weight: 500; 
+            padding: 10px 20px; 
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        #prev-btn { 
+            background: transparent; 
+            color: rgba(255, 255, 255, 0.6); 
+        }
+        
+        #prev-btn:hover:not(:disabled) { 
+            background: rgba(255, 255, 255, 0.1); 
+            color: #fff;
+        }
+        
+        #next-btn { 
+            background: #00d2ff; 
+            color: #0f172a; 
+            border-color: #00d2ff;
+        }
+        
+        #next-btn:hover:not(:disabled) { 
+            background: #00bce6; 
+        }
+        
+        button:disabled { 
+            opacity: 0.3; 
+            cursor: not-allowed; 
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar { flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px; }
+            .header-title-container { order: 3; width: 100%; margin-top: 5px; }
+            .header-title-container h1 { font-size: 1.5rem; }
+            .lesson-select { width: 200px; }
+            .card-scene { height: 40vh; min-height: 250px; margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar with Dropdown and Title -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            TOCFL A2 <span>Book 1 Master</span>
+        </div>
+        
+        <div class="header-title-container">
+            <h1 id="lesson-title">Lesson Title</h1>
+        </div>
+
+        <div class="lesson-selector">
+            <select id="lesson-select" class="lesson-select" onchange="changeLesson()">
+                <option value="1">Lesson 1: 歡迎你來臺灣！</option>
+                <option value="2">Lesson 2: 我的家人</option>
+                <option value="3">Lesson 3: 週末做什麼？</option>
+                <option value="4">Lesson 4: 請問一共多少錢？</option>
+                <option value="5">Lesson 5: 牛肉麵真好吃</option>
+                <option value="6">Lesson 6: 他們學校在山上</option>
+                <option value="7">Lesson 7: 早上九點去 KTV</option>
+                <option value="8">Lesson 8: 坐火車去臺南</option>
+                <option value="9">Lesson 9: 那個城市好漂亮</option>
+                <option value="10">Lesson 10: 臺灣的水果很好吃</option>
+                <option value="11">Lesson 11: 我要租房子</option>
+                <option value="12">Lesson 12: 你在臺灣學多久的中文？</option>
+                <option value="13">Lesson 13: 生日快樂</option>
+                <option value="14">Lesson 14: 天氣這麼冷！</option>
+                <option value="15">Lesson 15: 我很不舒服</option>
+            </select>
+            <div class="select-arrow">▼</div>
+        </div>
+    </nav>
+
+    <!-- Progress Indicator -->
+    <div class="progress-section">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+        <p id="card-counter">Card 1 of X</p>
+    </div>
+
+    <!-- Flashcard Area -->
+    <div class="main-container">
+        <div class="card-scene" onclick="flipCard()">
+            <div class="card" id="flashcard">
+                <!-- FRONT OF CARD -->
+                <div class="card-face card-front">
+                    <div class="vocab-type" id="front-type">Type</div>
+                    <div class="word" id="front-text">Word</div>
+                    <div class="hint">Click anywhere to flip</div>
+                </div>
+                
+                <!-- BACK OF CARD -->
+                <div class="card-face card-back">
+                    <div class="vocab-type" id="back-type">Type</div>
+                    <div class="pinyin" id="back-pinyin">pinyin</div>
+                    <div class="meaning" id="back-meaning">Meaning</div>
+                    <div class="hint">Click to flip back</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="prev-btn" onclick="prevCard()">&#8592; Previous</button>
+            <button id="next-btn" onclick="nextCard()">Next &#8594;</button>
+        </div>
+    </div>
+
+<script>
+    // Data Structure: Contains all 15 lessons
+    const lessonsData = {
+        "1": {
+            title: "Lesson 1: 歡迎你來臺灣！",
+            flashcards: [
+                { type: "People", front: "陳月美", pinyin: "Chén Yuèměi", back: "a woman from Vietnam" },
+                { type: "People", front: "李明華", pinyin: "Lǐ Mínghuá", back: "a man from Taiwan" },
+                { type: "People", front: "王開文", pinyin: "Wáng Kāiwén", back: "a man from the US" },
+                { type: "Vocab I", front: "你", pinyin: "nǐ", back: "(N) you" },
+                { type: "Vocab I", front: "來", pinyin: "lái", back: "(V) to come" },
+                { type: "Vocab I", front: "是", pinyin: "shì", back: "(Vst) to be" },
+                { type: "Vocab I", front: "小姐", pinyin: "xiǎojiě", back: "(N) Miss, Ms." },
+                { type: "Vocab I", front: "嗎", pinyin: "ma", back: "(Ptc) sentence final particle" },
+                { type: "Vocab I", front: "接", pinyin: "jiē", back: "(V) to pick sb up" },
+                { type: "Vocab I", front: "我們", pinyin: "wǒmen", back: "(N) we, us" },
+                { type: "Vocab I", front: "我", pinyin: "wǒ", back: "(N) I, me" },
+                { type: "Vocab I", front: "這", pinyin: "zhè / zhèi", back: "(Det) this" },
+                { type: "Vocab I", front: "先生", pinyin: "xiānshēng", back: "(N) Mr." },
+                { type: "Vocab I", front: "好", pinyin: "hǎo", back: "(Vs) fine, well" },
+                { type: "Vocab I", front: "姓", pinyin: "xìng", back: "(Vst) to be surnamed" },
+                { type: "Vocab I", front: "叫", pinyin: "jiào", back: "(Vst) to be called, i.e., to have the first name xx" },
+                { type: "Vocab I", front: "你們", pinyin: "nǐmen", back: "(N) you (plural)" },
+                { type: "Names", front: "臺灣 (=台灣)", pinyin: "Táiwān", back: "Taiwan" },
+                { type: "Phrases", front: "歡迎", pinyin: "huānyíng", back: "welcome" },
+                { type: "Phrases", front: "請問", pinyin: "qǐngwèn", back: "May I ask you... Excuse me,..." },
+                { type: "Phrases", front: "是的", pinyin: "shìde", back: "yes" },
+                { type: "Phrases", front: "謝謝", pinyin: "xièxie", back: "Thank you." },
+                { type: "Phrases", front: "不客氣", pinyin: "búkèqì", back: "You're welcome." },
+                { type: "Phrases", front: "你好", pinyin: "nǐ hǎo", back: "How are you? Hello." },
+                { type: "Vocab II", front: "請", pinyin: "qǐng", back: "(V) please" },
+                { type: "Vocab II", front: "喝", pinyin: "hē", back: "(V) to drink" },
+                { type: "Vocab II", front: "茶", pinyin: "chá", back: "(N) tea" },
+                { type: "Vocab II", front: "很", pinyin: "hěn", back: "(Adv) very" },
+                { type: "Vocab II", front: "好喝", pinyin: "hǎohē", back: "(Vs) (lit. good to drink) to taste good" },
+                { type: "Vocab II", front: "什麼", pinyin: "shénme", back: "(N) what" },
+                { type: "Vocab II", front: "人", pinyin: "rén", back: "(N) person, people" },
+                { type: "Vocab II", front: "喜歡", pinyin: "xǐhuān", back: "(Vst) to like" },
+                { type: "Vocab II", front: "呢", pinyin: "ne", back: "(Ptc) sentence final particle" },
+                { type: "Vocab II", front: "他", pinyin: "tā", back: "(N) he, him" },
+                { type: "Vocab II", front: "不", pinyin: "bù", back: "(Adv) not" },
+                { type: "Vocab II", front: "哪", pinyin: "nǎ / něi", back: "(Det) which" },
+                { type: "Vocab II", front: "要", pinyin: "yào", back: "(Vaux) to want to" },
+                { type: "Vocab II", front: "咖啡", pinyin: "kāfēi", back: "(N) coffee" },
+                { type: "Names", front: "烏龍茶", pinyin: "Wūlóng chá", back: "Oolong tea" },
+                { type: "Names", front: "日本", pinyin: "Rìběn", back: "Japan" },
+                { type: "Names", front: "美國", pinyin: "Měiguó", back: "America" },
+                { type: "Phrases", front: "對不起", pinyin: "duìbùqǐ", back: "I'm sorry." },
+                { type: "Phrases", front: "哪國", pinyin: "nǎ guó / něi guó", back: "Which country?" }
+            ]
+        },
+        "2": {
+            title: "Lesson 2: 我的家人",
+            flashcards: [
+                { type: "People", front: "張怡君", pinyin: "Zhāng Yíjūn", back: "a woman from Taiwan" },
+                { type: "People", front: "馬安同", pinyin: "Mǎ Āntóng", back: "a man from the Republic of Honduras" },
+                { type: "Vocab I", front: "的", pinyin: "de", back: "(Ptc) modification marker" },
+                { type: "Vocab I", front: "家人", pinyin: "jiārén", back: "(N) family (members)" },
+                { type: "Vocab I", front: "家", pinyin: "jiā", back: "(N) home, house" },
+                { type: "Vocab I", front: "漂亮", pinyin: "piàoliàng", back: "(Vs) pretty" },
+                { type: "Vocab I", front: "房子", pinyin: "fángzi", back: "(N) house" },
+                { type: "Vocab I", front: "坐", pinyin: "zuò", back: "(Vi) to sit" },
+                { type: "Vocab I", front: "好", pinyin: "hǎo", back: "(Ptc) OK" },
+                { type: "Vocab I", front: "有", pinyin: "yǒu", back: "(Vst) to have" },
+                { type: "Vocab I", front: "多", pinyin: "duō", back: "(Vs-pred) many" },
+                { type: "Vocab I", front: "照片", pinyin: "zhàopiàn", back: "(N) photo" },
+                { type: "Vocab I", front: "都", pinyin: "dōu", back: "(Adv) all, both" },
+                { type: "Vocab I", front: "照相", pinyin: "zhàoxiàng", back: "(V-sep) to take a photo" },
+                { type: "Vocab I", front: "張", pinyin: "zhāng", back: "(M) measure word for flat objects" },
+                { type: "Vocab I", front: "好看", pinyin: "hǎokàn", back: "(Vs) good-looking" },
+                { type: "Vocab I", front: "誰", pinyin: "shéi", back: "(N) who" },
+                { type: "Vocab I", front: "姐姐", pinyin: "jiějie", back: "(N) older sister" },
+                { type: "Vocab I", front: "妹妹", pinyin: "mèimei", back: "(N) younger sister" },
+                { type: "Vocab I", front: "爸爸", pinyin: "bàba", back: "(N) dad" },
+                { type: "Vocab I", front: "媽媽", pinyin: "māma", back: "(N) mom" },
+                { type: "Phrases", front: "請進", pinyin: "qǐng jìn", back: "Please come in!" },
+                { type: "People", front: "田中誠一", pinyin: "Tiánzhōng Chéngyī", back: "a man from Japan" },
+                { type: "Vocab II", front: "伯母", pinyin: "bómǔ", back: "(N) aunt; polite term for a friend's mother" },
+                { type: "Vocab II", front: "您", pinyin: "nín", back: "(N) you (honorific)" },
+                { type: "Vocab II", front: "名字", pinyin: "míngzi", back: "(N) name" },
+                { type: "Vocab II", front: "書", pinyin: "shū", back: "(N) book" },
+                { type: "Vocab II", front: "哥哥", pinyin: "gēge", back: "(N) older brother" },
+                { type: "Vocab II", front: "老師", pinyin: "lǎoshī", back: "(N) teacher" },
+                { type: "Vocab II", front: "看書", pinyin: "kànshū", back: "(V-sep) to read" },
+                { type: "Vocab II", front: "幾", pinyin: "jǐ", back: "(N) how many" },
+                { type: "Vocab II", front: "個", pinyin: "ge", back: "(M) general measure word" },
+                { type: "Vocab II", front: "沒", pinyin: "méi", back: "(Adv) not" },
+                { type: "Vocab II", front: "兄弟", pinyin: "xiōngdì", back: "(N) brothers" },
+                { type: "Vocab II", front: "姐妹", pinyin: "jiěmèi", back: "(N) sisters" },
+                { type: "Vocab II", front: "五", pinyin: "wǔ", back: "(N) five" },
+                { type: "Vocab II", front: "兩", pinyin: "liǎng", back: "(N) two" }
+            ]
+        },
+        "3": {
+            title: "Lesson 3: 週末做什麼？",
+            flashcards: [
+                { type: "Vocab I", front: "週末", pinyin: "zhōumò", back: "(N) weekend" },
+                { type: "Vocab I", front: "聽", pinyin: "tīng", back: "(V) to listen" },
+                { type: "Vocab I", front: "音樂", pinyin: "yīnyuè", back: "(N) music" },
+                { type: "Vocab I", front: "運動", pinyin: "yùndòng", back: "(Vi) to exercise" },
+                { type: "Vocab I", front: "打", pinyin: "dǎ", back: "(V) to play (ball games)" },
+                { type: "Vocab I", front: "網球", pinyin: "wǎngqiú", back: "(N) tennis" },
+                { type: "Vocab I", front: "棒球", pinyin: "bàngqiú", back: "(N) baseball" },
+                { type: "Vocab I", front: "和", pinyin: "hàn", back: "(Conj) and, as well as" },
+                { type: "Vocab I", front: "游泳", pinyin: "yóuyǒng", back: "(V-sep) to swim" },
+                { type: "Vocab I", front: "常", pinyin: "cháng", back: "(Adv) often" },
+                { type: "Vocab I", front: "籃球", pinyin: "lánqiú", back: "(N) basketball" },
+                { type: "Vocab I", front: "也", pinyin: "yě", back: "(Adv) also" },
+                { type: "Vocab I", front: "踢", pinyin: "tī", back: "(V) to kick" },
+                { type: "Vocab I", front: "足球", pinyin: "zúqiú", back: "(N) soccer" },
+                { type: "Vocab I", front: "覺得", pinyin: "juéde", back: "(Vst) to feel, to think" },
+                { type: "Vocab I", front: "好玩", pinyin: "hǎowán", back: "(Vs) interesting, fun" },
+                { type: "Vocab I", front: "明天", pinyin: "míngtiān", back: "(N) tomorrow" },
+                { type: "Vocab I", front: "早上", pinyin: "zǎoshàng", back: "(N) morning" },
+                { type: "Vocab I", front: "去", pinyin: "qù", back: "(V) to go" },
+                { type: "Vocab I", front: "怎麼樣", pinyin: "zěnmeyàng", back: "(Vs) How about it? What do you think?" },
+                { type: "Vocab I", front: "啊", pinyin: "a", back: "(Ptc) sentence-final particle" },
+                { type: "Phrases", front: "做什麼", pinyin: "zuò shénme", back: "do what" },
+                { type: "Phrases", front: "好啊", pinyin: "hǎo a", back: "OK" },
+                { type: "People", front: "白如玉", pinyin: "Bái Rúyù", back: "a woman from the US" },
+                { type: "Vocab II", front: "今天", pinyin: "jīntiān", back: "(N) today" },
+                { type: "Vocab II", front: "晚上", pinyin: "wǎnshàng", back: "(N) evening, night" },
+                { type: "Vocab II", front: "看", pinyin: "kàn", back: "(V) to see, to watch" },
+                { type: "Vocab II", front: "電影", pinyin: "diànyǐng", back: "(N) movie" },
+                { type: "Vocab II", front: "妳", pinyin: "nǐ", back: "(N) you (female)" },
+                { type: "Vocab II", front: "想", pinyin: "xiǎng", back: "(Vaux) to want, to think" },
+                { type: "Vocab II", front: "還是", pinyin: "háishì", back: "(Conj) or (used in a question)" },
+                { type: "Vocab II", front: "吧", pinyin: "ba", back: "(Ptc) sentence-final particle for suggestion" },
+                { type: "Vocab II", front: "可以", pinyin: "kěyǐ", back: "(Vaux) could (possibility)" },
+                { type: "Vocab II", front: "學", pinyin: "xué", back: "(V) to learn, to study" },
+                { type: "Vocab II", front: "中文", pinyin: "Zhōngwén", back: "(N) Chinese language" },
+                { type: "Vocab II", front: "一起", pinyin: "yìqǐ", back: "(Adv) together" },
+                { type: "Vocab II", front: "吃", pinyin: "chī", back: "(V) to eat" },
+                { type: "Vocab II", front: "晚飯", pinyin: "wǎnfàn", back: "(N) dinner" },
+                { type: "Vocab II", front: "菜", pinyin: "cài", back: "(N) cuisine" },
+                { type: "Names", front: "越南", pinyin: "Yuènán", back: "Vietnam" },
+                { type: "Phrases", front: "好不好", pinyin: "hǎo bù hǎo", back: "How about...? How does that sound?" }
+            ]
+        },
+        "4": {
+            title: "Lesson 4: 請問一共多少錢？",
+            flashcards: [
+                { type: "Vocab I", front: "一共", pinyin: "yígòng", back: "(Adv) altogether" },
+                { type: "Vocab I", front: "多少", pinyin: "duōshǎo", back: "(N) how much, how many" },
+                { type: "Vocab I", front: "錢", pinyin: "qián", back: "(N) money" },
+                { type: "Vocab I", front: "老闆", pinyin: "lǎobǎn", back: "(N) store-owner, boss" },
+                { type: "Vocab I", front: "買", pinyin: "mǎi", back: "(V) to buy" },
+                { type: "Vocab I", front: "杯", pinyin: "bēi", back: "(M) cup" },
+                { type: "Vocab I", front: "熱", pinyin: "rè", back: "(Vs) hot" },
+                { type: "Vocab I", front: "包子", pinyin: "bāozi", back: "(N) steamed buns with meat filling" },
+                { type: "Vocab I", front: "要", pinyin: "yào", back: "(V) to want, to need" },
+                { type: "Vocab I", front: "大", pinyin: "dà", back: "(Vs) large" },
+                { type: "Vocab I", front: "中", pinyin: "zhōng", back: "(Vs-attr) medium" },
+                { type: "Vocab I", front: "小", pinyin: "xiǎo", back: "(Vs) small" },
+                { type: "Vocab I", front: "幫", pinyin: "bāng", back: "(Prep) for" },
+                { type: "Vocab I", front: "微波", pinyin: "wéibō", back: "(V) to microwave" },
+                { type: "Vocab I", front: "百", pinyin: "bǎi", back: "(N) hundred" },
+                { type: "Vocab I", front: "塊", pinyin: "kuài", back: "(M) measure word for Chinese money" },
+                { type: "Phrases", front: "好的", pinyin: "hǎode", back: "OK" },
+                { type: "Phrases", front: "外帶", pinyin: "wàidài", back: "take out, to go" },
+                { type: "Phrases", front: "內用", pinyin: "nèiyòng", back: "for here" },
+                { type: "Vocab II", front: "支", pinyin: "zhī", back: "(M) measure word for cell phones" },
+                { type: "Vocab II", front: "新", pinyin: "xīn", back: "(Vs) new" },
+                { type: "Vocab II", front: "手機", pinyin: "shǒujī", back: "(N) cell phone" },
+                { type: "Vocab II", front: "太", pinyin: "tài", back: "(Adv) too" },
+                { type: "Vocab II", front: "舊", pinyin: "jiù", back: "(Vs) old" },
+                { type: "Vocab II", front: "了", pinyin: "le", back: "(Ptc) sentence-final particle (certainty)" },
+                { type: "Vocab II", front: "種", pinyin: "zhǒng", back: "(M) kind, type" },
+                { type: "Vocab II", front: "能", pinyin: "néng", back: "(Vaux) can, to be able to" },
+                { type: "Vocab II", front: "上網", pinyin: "shàngwǎng", back: "(V-sep) to access the internet" },
+                { type: "Vocab II", front: "那", pinyin: "nà / nèi", back: "(Det) that" },
+                { type: "Vocab II", front: "貴", pinyin: "guì", back: "(Vs) expensive" },
+                { type: "Vocab II", front: "賣", pinyin: "mài", back: "(V) to sell" },
+                { type: "Vocab II", front: "便宜", pinyin: "piányí", back: "(Vs) cheap, inexpensive" },
+                { type: "Vocab II", front: "要", pinyin: "yào", back: "(Vst) to take, to require" },
+                { type: "Vocab II", front: "萬", pinyin: "wàn", back: "(N) ten thousand" },
+                { type: "Vocab II", front: "千", pinyin: "qiān", back: "(N) thousand" },
+                { type: "Phrases", front: "為什麼", pinyin: "wèishénme", back: "why" }
+            ]
+        },
+        "5": {
+            title: "Lesson 5: 牛肉麵真好吃",
+            flashcards: [
+                { type: "Vocab I", front: "牛肉", pinyin: "niúròu", back: "(N) beef" },
+                { type: "Vocab I", front: "麵", pinyin: "miàn", back: "(N) noodles" },
+                { type: "Vocab I", front: "真", pinyin: "zhēn", back: "(Adv) really" },
+                { type: "Vocab I", front: "好吃", pinyin: "hǎochī", back: "(Vs) delicious" },
+                { type: "Vocab I", front: "說", pinyin: "shuō", back: "(V) say" },
+                { type: "Vocab I", front: "少", pinyin: "shǎo", back: "(Vs-pred) few in number" },
+                { type: "Vocab I", front: "有名", pinyin: "yǒumíng", back: "(Vs) well known, famous" },
+                { type: "Vocab I", front: "小吃", pinyin: "xiǎochī", back: "(N) light repast, snack" },
+                { type: "Vocab I", front: "最", pinyin: "zuì", back: "(Adv) most" },
+                { type: "Vocab I", front: "湯", pinyin: "tāng", back: "(N) soup, broth" },
+                { type: "Vocab I", front: "這麼", pinyin: "zhème", back: "(Adv) so" },
+                { type: "Vocab I", front: "知道", pinyin: "zhīdào", back: "(Vst) to know" },
+                { type: "Vocab I", front: "家", pinyin: "jiā", back: "(M) measure word for restaurants, shops, etc." },
+                { type: "Vocab I", front: "店", pinyin: "diàn", back: "(N) shop, store" },
+                { type: "Vocab I", front: "一定", pinyin: "yídìng", back: "(Adv) really must, definitely" },
+                { type: "Vocab I", front: "點", pinyin: "diǎn", back: "(V) to order (meals)" },
+                { type: "Vocab I", front: "碗", pinyin: "wǎn", back: "(M) a bowl of" },
+                { type: "Phrases", front: "是啊", pinyin: "shì a", back: "That's right" },
+                { type: "Phrases", front: "小籠包", pinyin: "xiǎolóngbāo", back: "xiaolongbao" },
+                { type: "Phrases", front: "臭豆腐", pinyin: "chòu dòufǔ", back: "stinky tofu" },
+                { type: "Phrases", front: "太好了", pinyin: "tài hǎo le", back: "Excellent. Great." },
+                { type: "Vocab II", front: "昨天", pinyin: "zuótiān", back: "(N) yesterday" },
+                { type: "Vocab II", front: "餐廳", pinyin: "cāntīng", back: "(N) restaurant" },
+                { type: "Vocab II", front: "可是", pinyin: "kěshì", back: "(Conj) but, however" },
+                { type: "Vocab II", front: "辣", pinyin: "là", back: "(Vs) hot (spicy)" },
+                { type: "Vocab II", front: "怕", pinyin: "pà", back: "(Vst) (here) to not like, to fear" },
+                { type: "Vocab II", front: "所以", pinyin: "suǒyǐ", back: "(Conj) therefore, so" },
+                { type: "Vocab II", front: "自己", pinyin: "zìjǐ", back: "(N) self" },
+                { type: "Vocab II", front: "做飯", pinyin: "zuòfàn", back: "(V-sep) to cook" },
+                { type: "Vocab II", front: "得", pinyin: "de", back: "(Ptc) complement marker" },
+                { type: "Vocab II", front: "會", pinyin: "huì", back: "(Vaux) to be able to, can" },
+                { type: "Vocab II", front: "甜點", pinyin: "tiándiǎn", back: "(N) dessert" },
+                { type: "Vocab II", front: "不錯", pinyin: "búcuò", back: "(Vs) not bad" },
+                { type: "Vocab II", front: "可以", pinyin: "kěyǐ", back: "(Vaux) could (possibility)" },
+                { type: "Vocab II", front: "教", pinyin: "jiāo", back: "(V) to teach" },
+                { type: "Vocab II", front: "到", pinyin: "dào", back: "(Prep) to" },
+                { type: "Phrases", front: "有一點", pinyin: "yǒu yìdiǎn", back: "a little" },
+                { type: "Phrases", front: "不好", pinyin: "bù hǎo", back: "not well" }
+            ]
+        },
+        "6": {
+            title: "Lesson 6: 他們學校在山上",
+            flashcards: [
+                { type: "Vocab I", front: "他們", pinyin: "tāmen", back: "(N) they (used for people only)" },
+                { type: "Vocab I", front: "學校", pinyin: "xuéxiào", back: "(N) school" },
+                { type: "Vocab I", front: "在", pinyin: "zài", back: "(Vst) to be located at" },
+                { type: "Vocab I", front: "山上", pinyin: "shānshàng", back: "(N) on a mountain, in the mountains" },
+                { type: "Vocab I", front: "哪裡", pinyin: "nǎlǐ", back: "(N) where" },
+                { type: "Vocab I", front: "遠", pinyin: "yuǎn", back: "(Vs) far" },
+                { type: "Vocab I", front: "那裡", pinyin: "nàlǐ", back: "(N) that place, there" },
+                { type: "Vocab I", front: "風景", pinyin: "fēngjǐng", back: "(N) scenery, landscape" },
+                { type: "Vocab I", front: "美", pinyin: "měi", back: "(Vs) beautiful" },
+                { type: "Vocab I", front: "前面", pinyin: "qiánmiàn", back: "(N) front" },
+                { type: "Vocab I", front: "海", pinyin: "hǎi", back: "(N) ocean" },
+                { type: "Vocab I", front: "後面", pinyin: "hòumiàn", back: "(N) back" },
+                { type: "Vocab I", front: "山", pinyin: "shān", back: "(N) mountain" },
+                { type: "Vocab I", front: "真的", pinyin: "zhēnde", back: "(Adv) really, truly" },
+                { type: "Vocab I", front: "地方", pinyin: "dìfāng", back: "(N) place" },
+                { type: "Vocab I", front: "現在", pinyin: "xiànzài", back: "(N) now" },
+                { type: "Vocab I", front: "附近", pinyin: "fùjìn", back: "(N) vicinity, near" },
+                { type: "Vocab I", front: "樓下", pinyin: "lóuxià", back: "(N) downstairs" },
+                { type: "Vocab I", front: "找", pinyin: "zhǎo", back: "(V) to meet, to see" },
+                { type: "Vocab I", front: "朋友", pinyin: "péngyǒu", back: "(N) friend" },
+                { type: "Vocab I", front: "上課", pinyin: "shàngkè", back: "(V-sep) to go to class" },
+                { type: "Names", front: "花蓮", pinyin: "Huālián", back: "name of a city on the eastern coast of Taiwan" },
+                { type: "Phrases", front: "聽說", pinyin: "tīngshuō", back: "hear that" },
+                { type: "Vocab II", front: "近", pinyin: "jìn", back: "(Vs) near" },
+                { type: "Vocab II", front: "方便", pinyin: "fāngbiàn", back: "(Vs) convenient" },
+                { type: "Vocab II", front: "這裡", pinyin: "zhèlǐ", back: "(N) here, this place" },
+                { type: "Vocab II", front: "學生", pinyin: "xuéshēng", back: "(N) student" },
+                { type: "Vocab II", front: "在", pinyin: "zài", back: "(Prep) at" },
+                { type: "Vocab II", front: "東西", pinyin: "dōngxi", back: "(N) things, stuff" },
+                { type: "Vocab II", front: "外面", pinyin: "wàimiàn", back: "(N) outside" },
+                { type: "Vocab II", front: "裡面", pinyin: "lǐmiàn", back: "(N) inside" },
+                { type: "Vocab II", front: "商店", pinyin: "shāngdiàn", back: "(N) store, shop" },
+                { type: "Vocab II", front: "吃飯", pinyin: "chīfàn", back: "(V-sep) to have a meal" },
+                { type: "Vocab II", front: "宿舍", pinyin: "sùshè", back: "(N) dormitory" },
+                { type: "Vocab II", front: "樓", pinyin: "lóu", back: "(N) a storey, a floor" },
+                { type: "Vocab II", front: "棟", pinyin: "dòng", back: "(M) measure word for buildings" },
+                { type: "Vocab II", front: "大樓", pinyin: "dàlóu", back: "(N) a multi-storey building" },
+                { type: "Vocab II", front: "圖書館", pinyin: "túshūguǎn", back: "(N) library" },
+                { type: "Vocab II", front: "旁邊", pinyin: "pángbiān", back: "(N) (by the) side, next to" },
+                { type: "Vocab II", front: "教室", pinyin: "jiàoshì", back: "(N) classroom" },
+                { type: "Vocab II", front: "游泳池", pinyin: "yóuyǒngchí", back: "(N) swimming pool" }
+            ]
+        },
+        "7": {
+            title: "Lesson 7: 早上九點去 KTV",
+            flashcards: [
+                { type: "Vocab I", front: "點", pinyin: "diǎn", back: "(M) o'clock" },
+                { type: "Vocab I", front: "KTV", pinyin: "KTV", back: "(N) Karaoke" },
+                { type: "Vocab I", front: "唱歌", pinyin: "chànggē", back: "(V-sep) to sing" },
+                { type: "Vocab I", front: "分", pinyin: "fēn", back: "(M) minute" },
+                { type: "Vocab I", front: "見面", pinyin: "jiànmiàn", back: "(V-sep) meet" },
+                { type: "Vocab I", front: "從", pinyin: "cóng", back: "(Prep) from" },
+                { type: "Vocab I", front: "中午", pinyin: "zhōngwǔ", back: "(N) noon" },
+                { type: "Vocab I", front: "得", pinyin: "děi", back: "(Vaux) to have to, must" },
+                { type: "Vocab I", front: "銀行", pinyin: "yínháng", back: "(N) bank" },
+                { type: "Vocab I", front: "時候", pinyin: "shíhòu", back: "(N) when" },
+                { type: "Vocab I", front: "後天", pinyin: "hòutiān", back: "(N) the day after tomorrow" },
+                { type: "Names", front: "大安", pinyin: "Dà'ān", back: "Da-an (district in Taipei)" },
+                { type: "Phrases", front: "下次", pinyin: "xià cì", back: "next time" },
+                { type: "Phrases", front: "沒問題", pinyin: "méi wèntí", back: "No problem." },
+                { type: "Phrases", front: "對了", pinyin: "duìle", back: "by the way" },
+                { type: "Phrases", front: "有空", pinyin: "yǒu kòng", back: "to have free time" },
+                { type: "Phrases", front: "再見", pinyin: "zàijiàn", back: "Goodbye." },
+                { type: "Vocab II", front: "在", pinyin: "zài", back: "(Vs) progressive aspect verb" },
+                { type: "Vocab II", front: "午餐", pinyin: "wǔcān", back: "(N) lunch" },
+                { type: "Vocab II", front: "剛", pinyin: "gāng", back: "(Adv) just now" },
+                { type: "Vocab II", front: "下課", pinyin: "xiàkè", back: "(V-sep) to finish class" },
+                { type: "Vocab II", front: "下午", pinyin: "xiàwǔ", back: "(N) afternoon" },
+                { type: "Vocab II", front: "半", pinyin: "bàn", back: "(N) half" },
+                { type: "Vocab II", front: "比賽", pinyin: "bǐsài", back: "(N) game, competition" },
+                { type: "Vocab II", front: "結束", pinyin: "jiéshù", back: "(Vp) to finish" },
+                { type: "Vocab II", front: "最近", pinyin: "zuìjìn", back: "(N) recently, lately" },
+                { type: "Vocab II", front: "忙", pinyin: "máng", back: "(Vs) busy" },
+                { type: "Vocab II", front: "每", pinyin: "měi", back: "(Det) every, each" },
+                { type: "Vocab II", front: "天", pinyin: "tiān", back: "(M) Measure word for day" },
+                { type: "Vocab II", front: "書法", pinyin: "shūfǎ", back: "(N) calligraphy" },
+                { type: "Vocab II", front: "課", pinyin: "kè", back: "(N) class" },
+                { type: "Vocab II", front: "開始", pinyin: "kāishǐ", back: "(Vp) to begin, to start" },
+                { type: "Vocab II", front: "字", pinyin: "zì", back: "(N) character" },
+                { type: "Vocab II", front: "寫", pinyin: "xiě", back: "(V) to write" },
+                { type: "Vocab II", front: "可以", pinyin: "kěyǐ", back: "(Vaux) may (permission)" },
+                { type: "Vocab II", front: "問", pinyin: "wèn", back: "(V) to ask" },
+                { type: "Phrases", front: "等一下", pinyin: "děng yíxià", back: "later" },
+                { type: "Phrases", front: "有事", pinyin: "yǒu shì", back: "to be busy, to be engaged" },
+                { type: "Phrases", front: "有意思", pinyin: "yǒu yìsi", back: "to be interesting, to be fun" }
+            ]
+        },
+        "8": {
+            title: "Lesson 8: 坐火車去臺南",
+            flashcards: [
+                { type: "Vocab I", front: "坐", pinyin: "zuò", back: "(V) to take by, to travel by" },
+                { type: "Vocab I", front: "火車", pinyin: "huǒchē", back: "(N) train" },
+                { type: "Vocab I", front: "跟", pinyin: "gēn", back: "(Prep) with" },
+                { type: "Vocab I", front: "玩", pinyin: "wán", back: "(V) to have fun" },
+                { type: "Vocab I", front: "怎麼", pinyin: "zěnme", back: "(Adv) how" },
+                { type: "Vocab I", front: "慢", pinyin: "màn", back: "(Vs) slow" },
+                { type: "Vocab I", front: "鐘頭", pinyin: "zhōngtóu", back: "(N) hour" },
+                { type: "Vocab I", front: "比較", pinyin: "bǐjiào", back: "(Adv) (comparatively) more" },
+                { type: "Vocab I", front: "快", pinyin: "kuài", back: "(Vs) fast" },
+                { type: "Vocab I", front: "車票", pinyin: "chēpiào", back: "(N) (train, bus) ticket" },
+                { type: "Vocab I", front: "非常", pinyin: "fēicháng", back: "(Adv) very" },
+                { type: "Vocab I", front: "但是", pinyin: "dànshì", back: "(Conj) but, however" },
+                { type: "Vocab I", front: "又", pinyin: "yòu", back: "(Adv) both...and..." },
+                { type: "Vocab I", front: "舒服", pinyin: "shūfú", back: "(Vs) comfortable" },
+                { type: "Vocab I", front: "站", pinyin: "zhàn", back: "(N) station" },
+                { type: "Vocab I", front: "或是", pinyin: "huòshì", back: "(Conj) or" },
+                { type: "Names", front: "臺南", pinyin: "Táinán", back: "a city in southwestern Taiwan" },
+                { type: "Names", front: "高鐵", pinyin: "gāotiě", back: "High Speed Rail (HSR)" },
+                { type: "Phrases", front: "網路上", pinyin: "wǎnglù shàng", back: "on the Internet" },
+                { type: "Phrases", front: "便利商店", pinyin: "biànlì shāngdiàn", back: "convenience store" },
+                { type: "Vocab II", front: "同學", pinyin: "tóngxué", back: "(N) classmate" },
+                { type: "Vocab II", front: "參觀", pinyin: "cānguān", back: "(V) to visit (an institution)" },
+                { type: "Vocab II", front: "古代", pinyin: "gǔdài", back: "(N) ancient times" },
+                { type: "Vocab II", front: "騎", pinyin: "qí", back: "(V) to ride" },
+                { type: "Vocab II", front: "機車", pinyin: "jīchē", back: "(N) motorcycle, scooter" },
+                { type: "Vocab II", front: "載", pinyin: "zài", back: "(V) to give someone a ride" },
+                { type: "Vocab II", front: "捷運", pinyin: "jiéyùn", back: "(N) Mass Rapid Transit (MRT)" },
+                { type: "Vocab II", front: "比", pinyin: "bǐ", back: "(Prep) (more...) than" },
+                { type: "Names", front: "故宮博物院", pinyin: "Gùgōng Bówùyuàn", back: "National Palace Museum" },
+                { type: "Names", front: "中國", pinyin: "Zhōngguó", back: "China" },
+                { type: "Phrases", front: "公共汽車", pinyin: "gōnggòng qìchē", back: "bus" },
+                { type: "Phrases", front: "不行", pinyin: "bù xíng", back: "will not do" },
+                { type: "Phrases", front: "計程車", pinyin: "jìchéngchē", back: "taxi" },
+                { type: "Phrases", front: "差不多", pinyin: "chàbùduō", back: "about the same" }
+            ]
+        },
+        "9": {
+            title: "Lesson 9: 那個城市好漂亮",
+            flashcards: [
+                { type: "Vocab I", front: "星期", pinyin: "xīngqí", back: "(N) week" },
+                { type: "Vocab I", front: "回國", pinyin: "huíguó", back: "(V-sep) to return to one's country" },
+                { type: "Vocab I", front: "打算", pinyin: "dǎsuàn", back: "(Vaux) to plan to" },
+                { type: "Vocab I", front: "電視", pinyin: "diànshì", back: "(N) TV" },
+                { type: "Vocab I", front: "影片", pinyin: "yǐngpiàn", back: "(N) film" },
+                { type: "Vocab I", front: "旅行", pinyin: "lǚxíng", back: "(Vi) to travel" },
+                { type: "Vocab I", front: "功課", pinyin: "gōngkè", back: "(N) homework" },
+                { type: "Vocab I", front: "出去", pinyin: "chūqù", back: "(Vi) to go out" },
+                { type: "Vocab I", front: "大概", pinyin: "dàgài", back: "(Adv) approximately, about, probably" },
+                { type: "Phrases", front: "放假", pinyin: "fàngjià", back: "to have a holiday" },
+                { type: "Phrases", front: "下個星期", pinyin: "xià ge xīngqí", back: "next week" },
+                { type: "Phrases", front: "有時候", pinyin: "yǒu shíhòu", back: "sometimes" },
+                { type: "Phrases", front: "多久", pinyin: "duō jiǔ", back: "how long" },
+                { type: "Names", front: "臺東", pinyin: "Táidōng", back: "Taidong (city in SE Taiwan)" },
+                { type: "Vocab II", front: "女", pinyin: "nǚ", back: "(N) girl-, female-" },
+                { type: "Vocab II", front: "月", pinyin: "yuè", back: "(N) month of a year" },
+                { type: "Vocab II", front: "號", pinyin: "hào", back: "(N) date, day of a month" },
+                { type: "Vocab II", front: "帶", pinyin: "dài", back: "(V) to take" },
+                { type: "Vocab II", front: "她", pinyin: "tā", back: "(N) she, her" },
+                { type: "Vocab II", front: "還", pinyin: "hái", back: "(Adv) still, additionally" },
+                { type: "Vocab II", front: "建議", pinyin: "jiànyì", back: "(N) suggestion" },
+                { type: "Vocab II", front: "夜市", pinyin: "yèshì", back: "(N) night market" },
+                { type: "Vocab II", front: "應該", pinyin: "yīnggāi", back: "(Vaux) should" },
+                { type: "Vocab II", front: "逛", pinyin: "guàng", back: "(V) to wander around, to look around" },
+                { type: "Vocab II", front: "特別", pinyin: "tèbié", back: "(Vs) special" },
+                { type: "Vocab II", front: "茶館", pinyin: "cháguǎn", back: "(N) tea house" },
+                { type: "Vocab II", front: "決定", pinyin: "juédìng", back: "(Vp) to decide" },
+                { type: "Vocab II", front: "要是", pinyin: "yàoshì", back: "(Conj) if" },
+                { type: "Vocab II", front: "就", pinyin: "jiù", back: "(Adv) then" },
+                { type: "Names", front: "貓空", pinyin: "Māokōng", back: "Maokong (place in Taipei)" }
+            ]
+        },
+        "10": {
+            title: "Lesson 10: 臺灣的水果很好吃",
+            flashcards: [
+                { type: "Vocab I", front: "水果", pinyin: "shuǐguǒ", back: "(N) fruit" },
+                { type: "Vocab I", front: "黃色", pinyin: "huángsè", back: "(N) yellow" },
+                { type: "Vocab I", front: "芒果", pinyin: "mángguǒ", back: "(N) mango" },
+                { type: "Vocab I", front: "給", pinyin: "gěi", back: "(V) to give" },
+                { type: "Vocab I", front: "塊", pinyin: "kuài", back: "(M) measure word for pieces of food" },
+                { type: "Vocab I", front: "香", pinyin: "xiāng", back: "(Vs) fragrant" },
+                { type: "Vocab I", front: "甜", pinyin: "tián", back: "(Vs) sweet (taste)" },
+                { type: "Vocab I", front: "紅色", pinyin: "hóngsè", back: "(N) red" },
+                { type: "Vocab I", front: "西瓜", pinyin: "xīguā", back: "(N) watermelon" },
+                { type: "Vocab I", front: "吧", pinyin: "ba", back: "(Ptc) sentence-final particle for guessing" },
+                { type: "Vocab I", front: "對", pinyin: "duì", back: "(Vs) correct, right" },
+                { type: "Vocab I", front: "以前", pinyin: "yǐqián", back: "(N) before" },
+                { type: "Vocab I", front: "機會", pinyin: "jīhuì", back: "(N) opportunity" },
+                { type: "Vocab I", front: "請", pinyin: "qǐng", back: "(V) to treat sb to sth" },
+                { type: "Phrases", front: "吃吃看", pinyin: "chīchīkàn", back: "to have a taste, try it, taste it" },
+                { type: "Vocab II", front: "拍", pinyin: "pāi", back: "(V) to take (pictures)" },
+                { type: "Vocab II", front: "笑", pinyin: "xiào", back: "(V) to laugh, to smile" },
+                { type: "Vocab II", front: "開心", pinyin: "kāixīn", back: "(Vs) happy" },
+                { type: "Vocab II", front: "穿", pinyin: "chuān", back: "(V) to wear, to put on" },
+                { type: "Vocab II", front: "衣服", pinyin: "yīfú", back: "(N) clothes" },
+                { type: "Vocab II", front: "旅館", pinyin: "lǚguǎn", back: "(N) hotel" },
+                { type: "Vocab II", front: "太太", pinyin: "tàitai", back: "(N) wife" },
+                { type: "Vocab II", front: "男", pinyin: "nán", back: "(N) boy-, male-" },
+                { type: "Vocab II", front: "矮", pinyin: "ǎi", back: "(Vs) short (height)" },
+                { type: "Vocab II", front: "高", pinyin: "gāo", back: "(Vs) tall" },
+                { type: "Vocab II", front: "弟弟", pinyin: "dìdi", back: "(N) younger brother" },
+                { type: "Vocab II", front: "乾淨", pinyin: "gānjìng", back: "(Vs) clean" },
+                { type: "Vocab II", front: "窗戶", pinyin: "chuānghù", back: "(N) window" },
+                { type: "Vocab II", front: "往", pinyin: "wǎng", back: "(Prep) toward, to" },
+                { type: "Vocab II", front: "藍色", pinyin: "lánsè", back: "(N) blue" },
+                { type: "Vocab II", front: "因為", pinyin: "yīnwèi", back: "(Conj) because" },
+                { type: "Vocab II", front: "住", pinyin: "zhù", back: "(V) to stay" },
+                { type: "Phrases", front: "上個月", pinyin: "shàng ge yuè", back: "last month" },
+                { type: "Phrases", front: "這些", pinyin: "zhèxiē", back: "these" }
+            ]
+        },
+        "11": {
+            title: "Lesson 11: 我要租房子",
+            flashcards: [
+                { type: "Vocab I", front: "租", pinyin: "zū", back: "(V) to rent" },
+                { type: "Vocab I", front: "房東", pinyin: "fángdōng", back: "(N) landlord" },
+                { type: "Vocab I", front: "客廳", pinyin: "kètīng", back: "(N) living room" },
+                { type: "Vocab I", front: "廚房", pinyin: "chúfáng", back: "(N) kitchen" },
+                { type: "Vocab I", front: "左邊", pinyin: "zuǒbiān", back: "(N) left (side)" },
+                { type: "Vocab I", front: "右邊", pinyin: "yòubiān", back: "(N) right (side)" },
+                { type: "Vocab I", front: "浴室", pinyin: "yùshì", back: "(N) bathroom" },
+                { type: "Vocab I", front: "超市", pinyin: "chāoshì", back: "(N) supermarket" },
+                { type: "Vocab I", front: "走路", pinyin: "zǒulù", back: "(V-sep) to walk" },
+                { type: "Vocab I", front: "分鐘", pinyin: "fēnzhōng", back: "(M) measure word for minutes" },
+                { type: "Vocab I", front: "就", pinyin: "jiù", back: "(Adv) only, merely" },
+                { type: "Vocab I", front: "到", pinyin: "dào", back: "(Vp) arrive" },
+                { type: "Vocab I", front: "間", pinyin: "jiān", back: "(M) measure word for houses, rooms, etc." },
+                { type: "Vocab I", front: "空", pinyin: "kōng", back: "(Vs) vacant, empty" },
+                { type: "Vocab I", front: "房間", pinyin: "fángjiān", back: "(N) room" },
+                { type: "Vocab I", front: "套房", pinyin: "tàofáng", back: "(N) suite" },
+                { type: "Vocab I", front: "回去", pinyin: "huíqù", back: "(Vi) to go back, to return" },
+                { type: "Vocab I", front: "想", pinyin: "xiǎng", back: "(V) to think" },
+                { type: "Vocab I", front: "再", pinyin: "zài", back: "(Adv) and then" },
+                { type: "Vocab I", front: "電話", pinyin: "diànhuà", back: "(N) telephone" },
+                { type: "Vocab I", front: "給", pinyin: "gěi", back: "(Prep) to" },
+                { type: "Names", front: "林", pinyin: "Lín", back: "Chinese last name" },
+                { type: "Phrases", front: "打電話", pinyin: "dǎ diànhuà", back: "to make a phone call" },
+                { type: "Vocab II", front: "喂", pinyin: "wéi", back: "(Ptc) a particle used in addressing people on the phone" },
+                { type: "Vocab II", front: "房租", pinyin: "fángzū", back: "(N) rent (for a room or a house)" },
+                { type: "Vocab II", front: "已經", pinyin: "yǐjīng", back: "(Adv) already" },
+                { type: "Vocab II", front: "習慣", pinyin: "xíguàn", back: "(Vs) to get settled down, to get used to" },
+                { type: "Vocab II", front: "問題", pinyin: "wèntí", back: "(N) problem, question" },
+                { type: "Vocab II", front: "熱水器", pinyin: "rèshuǐqì", back: "(N) water heater" },
+                { type: "Vocab II", front: "好像", pinyin: "hǎoxiàng", back: "(Adv) to seem to be, to appear to be" },
+                { type: "Vocab II", front: "會", pinyin: "huì", back: "(Vaux) will" },
+                { type: "Vocab II", front: "等", pinyin: "děng", back: "(V) to wait for" },
+                { type: "Vocab II", front: "那", pinyin: "nà", back: "(Ptc) then, in that case" },
+                { type: "Vocab II", front: "裝", pinyin: "zhuāng", back: "(V) to install" },
+                { type: "Vocab II", front: "不過", pinyin: "búguò", back: "(Conj) however, but" },
+                { type: "Vocab II", front: "付", pinyin: "fù", back: "(V) to pay" },
+                { type: "Phrases", front: "收到", pinyin: "shōudào", back: "to receive" },
+                { type: "Phrases", front: "不好意思", pinyin: "bùhǎo yìsi", back: "sorry" },
+                { type: "Phrases", front: "沒關係", pinyin: "méi guānxi", back: "Not a problem." },
+                { type: "Phrases", front: "有線電視", pinyin: "yǒuxiàn diànshì", back: "cable TV" }
+            ]
+        },
+        "12": {
+            title: "Lesson 12: 你在臺灣學多久的中文？",
+            flashcards: [
+                { type: "Vocab I", front: "計畫", pinyin: "jìhuà", back: "(V) to plan to" },
+                { type: "Vocab I", front: "年", pinyin: "nián", back: "(M) measure word for year" },
+                { type: "Vocab I", front: "久", pinyin: "jiǔ", back: "(Vs) long (time)" },
+                { type: "Vocab I", front: "時間", pinyin: "shíjiān", back: "(N) time" },
+                { type: "Vocab I", front: "先", pinyin: "xiān", back: "(Adv) first" },
+                { type: "Vocab I", front: "念", pinyin: "niàn", back: "(V) to study" },
+                { type: "Vocab I", front: "大學", pinyin: "dàxué", back: "(N) university" },
+                { type: "Vocab I", front: "需要", pinyin: "xūyào", back: "(Vst) to need" },
+                { type: "Vocab I", front: "花", pinyin: "huā", back: "(V) to spend (time or money)" },
+                { type: "Vocab I", front: "獎學金", pinyin: "jiǎngxuéjīn", back: "(N) scholarship" },
+                { type: "Vocab I", front: "成績", pinyin: "chéngjī", back: "(N) grades" },
+                { type: "Vocab I", front: "學費", pinyin: "xuéfèi", back: "(N) tuition" },
+                { type: "Vocab I", front: "公司", pinyin: "gōngsī", back: "(N) company" },
+                { type: "Vocab I", front: "替", pinyin: "tì", back: "(Prep) for, on behalf of" },
+                { type: "Vocab I", front: "希望", pinyin: "xīwàng", back: "(Vst) to hope" },
+                { type: "Vocab I", front: "以後", pinyin: "yǐhòu", back: "(N) in the future" },
+                { type: "Vocab I", front: "到", pinyin: "dào", back: "(V) to go/come to" },
+                { type: "Vocab I", front: "上班", pinyin: "shàngbān", back: "(V-sep) to go to work" },
+                { type: "Vocab I", front: "念書", pinyin: "niànshū", back: "(V-sep) to study" },
+                { type: "Vocab I", front: "累", pinyin: "lèi", back: "(Vs) tired" },
+                { type: "Phrases", front: "語言中心", pinyin: "yǔyán zhōngxīn", back: "language center" },
+                { type: "Phrases", front: "加油", pinyin: "jiāyóu", back: "keep up the good work" },
+                { type: "Vocab II", front: "工作", pinyin: "gōngzuò", back: "(Vi) to work" },
+                { type: "Vocab II", front: "去年", pinyin: "qùnián", back: "(N) last year" },
+                { type: "Vocab II", front: "做", pinyin: "zuò", back: "(V) to do, to engage in" },
+                { type: "Vocab II", front: "生意", pinyin: "shēngyì", back: "(N) business" },
+                { type: "Vocab II", front: "以後", pinyin: "yǐhòu", back: "(N) afterwards" },
+                { type: "Vocab II", front: "好", pinyin: "hǎo", back: "(Vs) easy to" },
+                { type: "Vocab II", front: "找", pinyin: "zhǎo", back: "(V) to look for" },
+                { type: "Vocab II", front: "工作", pinyin: "gōngzuò", back: "(N) job, work" },
+                { type: "Vocab II", front: "這樣", pinyin: "zhèyàng", back: "(N) this kind (of)" },
+                { type: "Vocab II", front: "國家", pinyin: "guójiā", back: "(N) country" },
+                { type: "Vocab II", front: "試", pinyin: "shì", back: "(Vi) to try" },
+                { type: "Vocab II", front: "難", pinyin: "nán", back: "(Vs) hard to, difficult to" },
+                { type: "Vocab II", front: "那麼", pinyin: "nàme", back: "(Ptc) then" },
+                { type: "Vocab II", front: "再", pinyin: "zài", back: "(Adv) again" },
+                { type: "Phrases", front: "試試看", pinyin: "shìshìkàn", back: "to give it a try, to try and see what happens" }
+            ]
+        },
+        "13": {
+            title: "Lesson 13: 生日快樂",
+            flashcards: [
+                { type: "Vocab I", front: "生日", pinyin: "shēngrì", back: "(N) birthday" },
+                { type: "Vocab I", front: "快樂", pinyin: "kuàilè", back: "(Vs) happy" },
+                { type: "Vocab I", front: "回來", pinyin: "huílái", back: "(Vi) to come back" },
+                { type: "Vocab I", front: "啊", pinyin: "a", back: "(Ptc) a particle indicating a realization" },
+                { type: "Vocab I", front: "怎麼", pinyin: "zěnme", back: "(Adv) How come?" },
+                { type: "Vocab I", front: "忘（了）", pinyin: "wàngle", back: "(Vpt) to forget" },
+                { type: "Vocab I", front: "記得", pinyin: "jìde", back: "(Vst) to remember" },
+                { type: "Vocab I", front: "當然", pinyin: "dāngrán", back: "(Adv) certainly, of course" },
+                { type: "Vocab I", front: "語言", pinyin: "yǔyán", back: "(N) language" },
+                { type: "Vocab I", front: "交換", pinyin: "jiāohuàn", back: "(V) to exchange" },
+                { type: "Vocab I", front: "那麼", pinyin: "nàme", back: "(Adv) so (very)" },
+                { type: "Vocab I", front: "熱心", pinyin: "rèxīn", back: "(Vs) with enthusiasm" },
+                { type: "Vocab I", front: "西班牙文", pinyin: "Xībānyá wén", back: "(N) the Spanish language" },
+                { type: "Vocab I", front: "一樣", pinyin: "yíyàng", back: "(Vs) the same, alike" },
+                { type: "Vocab I", front: "過", pinyin: "guò", back: "(V) to celebrate" },
+                { type: "Vocab I", front: "左右", pinyin: "zuǒyòu", back: "(N) approximately" },
+                { type: "Vocab I", front: "門口", pinyin: "ménkǒu", back: "(N) gate, entrance" },
+                { type: "Names", front: "西班牙", pinyin: "Xībānyá", back: "Spain" },
+                { type: "Phrases", front: "生日快樂", pinyin: "shēngrì kuàilè", back: "Happy Birthday." },
+                { type: "Phrases", front: "我就是", pinyin: "wǒ jiù shì", back: "(said of self on the phone) This is s/he speaking." },
+                { type: "Phrases", front: "好久不見", pinyin: "hǎojiǔ bújiàn", back: "long time no see" },
+                { type: "Phrases", front: "不必客氣", pinyin: "búbì kèqi", back: "No need to stand on formalities, i.e., It's my pleasure." },
+                { type: "Phrases", front: "太客氣", pinyin: "tài kèqì", back: "That's very kind of you." },
+                { type: "Vocab II", front: "禮物", pinyin: "lǐwù", back: "(N) gift, present" },
+                { type: "Vocab II", front: "今年", pinyin: "jīnnián", back: "(N) this year" },
+                { type: "Vocab II", front: "訂", pinyin: "dìng", back: "(V) to order (something in advance)" },
+                { type: "Vocab II", front: "了", pinyin: "le", back: "(Ptc) verbal particle indicating a completed action" },
+                { type: "Vocab II", front: "豬腳", pinyin: "zhūjiǎo", back: "(N) pork knuckles" },
+                { type: "Vocab II", front: "麵線", pinyin: "miànxiàn", back: "(N) extra fine noodles" },
+                { type: "Vocab II", front: "蛋", pinyin: "dàn", back: "(N) egg" },
+                { type: "Vocab II", front: "一點", pinyin: "yìdiǎn", back: "(Vs) a little, some" },
+                { type: "Vocab II", front: "傳統", pinyin: "chuántǒng", back: "(N) tradition, customs" },
+                { type: "Vocab II", front: "年輕", pinyin: "niánqīng", back: "(Vs) young" },
+                { type: "Vocab II", front: "蛋糕", pinyin: "dàngāo", back: "(N) cake" },
+                { type: "Vocab II", front: "對", pinyin: "duì", back: "(Prep) to" },
+                { type: "Vocab II", front: "祝", pinyin: "zhù", back: "(V) to wish (somebody happiness, good luck, etc.)" },
+                { type: "Phrases", front: "哪裡，哪裡", pinyin: "Nǎlǐ, nǎlǐ", back: "Don't mention it. It's my pleasure." },
+                { type: "Phrases", front: "大部分", pinyin: "dà bùfèn", back: "most (of), mostly" },
+                { type: "Phrases", front: "萬事如意", pinyin: "wànshì rúyì", back: "May everything go your way." },
+                { type: "Phrases", front: "心想事成", pinyin: "xīnxiǎng shìchéng", back: "May all your wishes come true." }
+            ]
+        },
+        "14": {
+            title: "Lesson 14: 天氣這麼冷！",
+            flashcards: [
+                { type: "Vocab I", front: "天氣", pinyin: "tiānqì", back: "(N) weather" },
+                { type: "Vocab I", front: "冷", pinyin: "lěng", back: "(Vs) cold" },
+                { type: "Vocab I", front: "風", pinyin: "fēng", back: "(N) wind" },
+                { type: "Vocab I", front: "滑雪", pinyin: "huáxuě", back: "(V-sep) to ski" },
+                { type: "Vocab I", front: "春天", pinyin: "chūntiān", back: "(N) spring (season)" },
+                { type: "Vocab I", front: "想", pinyin: "xiǎng", back: "(Vst) to miss (someone)" },
+                { type: "Vocab I", front: "新年", pinyin: "xīnnián", back: "(N) New Year" },
+                { type: "Vocab I", front: "快", pinyin: "kuài", back: "(Adv) soon" },
+                { type: "Vocab I", front: "父母", pinyin: "fùmǔ", back: "(N) parents" },
+                { type: "Vocab I", front: "冬天", pinyin: "dōngtiān", back: "(N) winter (season)" },
+                { type: "Vocab I", front: "明年", pinyin: "míngnián", back: "(N) next year" },
+                { type: "Vocab I", front: "秋天", pinyin: "qiūtiān", back: "(N) autumn (season)" },
+                { type: "Vocab I", front: "紅葉", pinyin: "hóngyè", back: "(N) red maple leaves" },
+                { type: "Vocab I", front: "只", pinyin: "zhǐ", back: "(Adv) only, merely" },
+                { type: "Names", front: "玉山", pinyin: "Yùshān", back: "Yu Shan (Mount Jade), tallest mountain in central Taiwan" },
+                { type: "Names", front: "紐約", pinyin: "Niǔyuē", back: "New York" },
+                { type: "Phrases", front: "下雪", pinyin: "xiàxuě", back: "to snow" },
+                { type: "Phrases", front: "十二月底", pinyin: "shí'èryuè dǐ", back: "the end of December" },
+                { type: "Vocab II", front: "雨", pinyin: "yǔ", back: "(N) rain" },
+                { type: "Vocab II", front: "傘", pinyin: "sǎn", back: "(N) umbrella" },
+                { type: "Vocab II", front: "颱風", pinyin: "táifēng", back: "(N) typhoon" },
+                { type: "Vocab II", front: "要", pinyin: "yào", back: "(Vaux) will, going to" },
+                { type: "Vocab II", front: "夏天", pinyin: "xiàtiān", back: "(N) summer (season)" },
+                { type: "Vocab II", front: "濕", pinyin: "shī", back: "(Vs) wet" },
+                { type: "Vocab II", front: "討厭", pinyin: "tǎoyàn", back: "(Vs) annoying" },
+                { type: "Vocab II", front: "新聞", pinyin: "xīnwén", back: "(N) news" },
+                { type: "Vocab II", front: "更", pinyin: "gèng", back: "(Adv) even (more, less, etc.)" },
+                { type: "Vocab II", front: "大家", pinyin: "dàjiā", back: "(N) everyone" },
+                { type: "Vocab II", front: "小心", pinyin: "xiǎoxīn", back: "(Vs) to be careful, to take care" },
+                { type: "Vocab II", front: "可怕", pinyin: "kěpà", back: "(Vs) scary" },
+                { type: "Vocab II", front: "停", pinyin: "tíng", back: "(Vp) to stop" },
+                { type: "Phrases", front: "下雨", pinyin: "xiàyǔ", back: "to rain" },
+                { type: "Phrases", front: "這次", pinyin: "zhè cì", back: "this time" },
+                { type: "Phrases", front: "上次", pinyin: "shàng cì", back: "last time" },
+                { type: "Phrases", front: "慢走", pinyin: "màn zǒu", back: "Bye. Take care." }
+            ]
+        },
+        "15": {
+            title: "Lesson 15: 我很不舒服",
+            flashcards: [
+                { type: "Vocab I", front: "醫生", pinyin: "yīshēng", back: "(N) doctor" },
+                { type: "Vocab I", front: "一直", pinyin: "yìzhí", back: "(Adv) continuously, all the way" },
+                { type: "Vocab I", front: "流", pinyin: "liú", back: "(V) to flow" },
+                { type: "Vocab I", front: "鼻水", pinyin: "bíshuǐ", back: "(N) snot, nasal mucus, a running nose" },
+                { type: "Vocab I", front: "頭", pinyin: "tóu", back: "(N) head" },
+                { type: "Vocab I", front: "痛", pinyin: "tòng", back: "(Vs) painful" },
+                { type: "Vocab I", front: "胃口", pinyin: "wèikǒu", back: "(N) appetite" },
+                { type: "Vocab I", front: "差", pinyin: "chā", back: "(Vs) poor, bad" },
+                { type: "Vocab I", front: "喉嚨", pinyin: "hóulóng", back: "(N) throat" },
+                { type: "Vocab I", front: "發炎", pinyin: "fāyán", back: "(Vp-sep) to be inflamed" },
+                { type: "Vocab I", front: "生病", pinyin: "shēngbìng", back: "(Vp-sep) to fall ill" },
+                { type: "Vocab I", front: "發燒", pinyin: "fāshāo", back: "(Vp-sep) to have a fever" },
+                { type: "Vocab I", front: "感冒", pinyin: "gǎnmào", back: "(Vp) to catch/have a cold" },
+                { type: "Vocab I", front: "藥", pinyin: "yào", back: "(N) medicine" },
+                { type: "Vocab I", front: "藥局", pinyin: "yàojú", back: "(N) pharmacy, drug store" },
+                { type: "Vocab I", front: "拿", pinyin: "ná", back: "(V) to get" },
+                { type: "Vocab I", front: "把", pinyin: "bǎ", back: "(Ptc) disposal marker" },
+                { type: "Vocab I", front: "水", pinyin: "shuǐ", back: "(N) water" },
+                { type: "Vocab I", front: "休息", pinyin: "xiūxí", back: "(Vi) to take a rest" },
+                { type: "Vocab I", front: "睡覺", pinyin: "shuìjiào", back: "(V-sep) to sleep" },
+                { type: "Phrases", front: "早一點", pinyin: "zǎo yìdiǎn", back: "a bit earlier" },
+                { type: "Vocab II", front: "臉色", pinyin: "liǎnsè", back: "(N) a person's \"color\" (said of the face when healthy or sick, pleased or angry etc.)" },
+                { type: "Vocab II", front: "難看", pinyin: "nánkàn", back: "(Vs) not to look good" },
+                { type: "Vocab II", front: "肚子", pinyin: "dùzi", back: "(N) stomach, abdomen" },
+                { type: "Vocab II", front: "吐", pinyin: "tù", back: "(V) to throw up, to vomit" },
+                { type: "Vocab II", front: "幾", pinyin: "jǐ", back: "(N) (a) few" },
+                { type: "Vocab II", front: "次", pinyin: "cì", back: "(M) measure word for times, occurrences" },
+                { type: "Vocab II", front: "陪", pinyin: "péi", back: "(V) to go/stay with somebody, to accompany" },
+                { type: "Vocab II", front: "看病", pinyin: "kànbìng", back: "(V-sep) to see a doctor" },
+                { type: "Vocab II", front: "健康", pinyin: "jiànkāng", back: "(N) health" },
+                { type: "Vocab II", front: "保險", pinyin: "bǎoxiǎn", back: "(N) insurance" },
+                { type: "Vocab II", front: "跟", pinyin: "gēn", back: "(Prep) to" },
+                { type: "Vocab II", front: "油", pinyin: "yóu", back: "(Vs) oily, greasy" },
+                { type: "Vocab II", front: "冰", pinyin: "bīng", back: "(Vs) icy" },
+                { type: "Vocab II", front: "別", pinyin: "bié", back: "(Adv) don't (used in imperatives)" },
+                { type: "Vocab II", front: "關心", pinyin: "guānxīn", back: "(Vst) to be concerned about" },
+                { type: "Vocab II", front: "包", pinyin: "bāo", back: "(M) measure word for bags, packages etc." },
+                { type: "Vocab II", front: "睡", pinyin: "shuì", back: "(Vi) to sleep" },
+                { type: "Vocab II", front: "小時", pinyin: "xiǎoshí", back: "(N) hour" },
+                { type: "Phrases", front: "怎麼了", pinyin: "zěnme le", back: "What's wrong?" },
+                { type: "Phrases", front: "不用了", pinyin: "búyòng le", back: "It's not necessary." },
+                { type: "Phrases", front: "健康中心", pinyin: "jiànkāng zhōngxīn", back: "health center" },
+                { type: "Phrases", front: "回家", pinyin: "huí jiā", back: "go home" },
+                { type: "Phrases", front: "最好", pinyin: "zuìhǎo", back: "It would be best... / (You) should..." }
+            ]
+        }
+    };
+
+    let currentLesson = "1";
+    let currentIndex = 0;
+    let isFlipped = false;
+
+    // DOM Elements
+    const lessonTitleEl = document.getElementById("lesson-title");
+    const frontTextEl = document.getElementById("front-text");
+    const frontTypeEl = document.getElementById("front-type");
+    const backPinyinEl = document.getElementById("back-pinyin");
+    const backMeaningEl = document.getElementById("back-meaning");
+    const backTypeEl = document.getElementById("back-type");
+    const cardEl = document.getElementById("flashcard");
+    const counterEl = document.getElementById("card-counter");
+    const progressBarEl = document.getElementById("progress");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const lessonSelectEl = document.getElementById("lesson-select");
+
+    function changeLesson() {
+        currentLesson = lessonSelectEl.value;
+        currentIndex = 0;
+        isFlipped = false;
+        cardEl.classList.remove("flipped");
+        
+        // Slight delay to allow flip animation to reset before changing content
+        setTimeout(renderCard, 150);
+    }
+
+    function renderCard() {
+        const lessonData = lessonsData[currentLesson];
+        const flashcards = lessonData.flashcards;
+        const card = flashcards[currentIndex];
+        
+        // Update Title
+        lessonTitleEl.innerText = lessonData.title;
+
+        // Update content
+        frontTypeEl.innerText = card.type;
+        frontTextEl.innerText = card.front;
+        
+        backTypeEl.innerText = card.type;
+        backPinyinEl.innerText = card.pinyin;
+        backMeaningEl.innerText = card.back;
+        
+        // Update UI state
+        counterEl.innerText = `Card ${currentIndex + 1} of ${flashcards.length}`;
+        const progressPercentage = ((currentIndex + 1) / flashcards.length) * 100;
+        progressBarEl.style.width = `${progressPercentage}%`;
+        
+        // Button states
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === flashcards.length - 1;
+
+        // Reset flip state if navigating
+        if (isFlipped) {
+            cardEl.classList.remove("flipped");
+            isFlipped = false;
+        }
+    }
+
+    function flipCard() {
+        isFlipped = !isFlipped;
+        if(isFlipped) {
+            cardEl.classList.add("flipped");
+        } else {
+            cardEl.classList.remove("flipped");
+        }
+    }
+
+    function prevCard() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCard();
+        }
+    }
+
+    function nextCard() {
+        const flashcards = lessonsData[currentLesson].flashcards;
+        if (currentIndex < flashcards.length - 1) {
+            currentIndex++;
+            renderCard();
+        }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowRight') {
+            nextCard();
+        } else if (event.key === 'ArrowLeft') {
+            prevCard();
+        } else if (event.key === ' ' || event.key === 'Spacebar') {
+            event.preventDefault(); // Prevent page scroll
+            flipCard();
+        }
+    });
+
+    // Initialize the app
+    renderCard();
+</script>
+
+</body>
+</html>
